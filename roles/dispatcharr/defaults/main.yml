@@ -1,0 +1,152 @@
+#########################################################################
+# Title:            Sandbox: dispatcharr                                #
+# Author(s):        maindust                                            #
+# URL:              https://github.com/saltyorg/Sandbox                 #
+# --                                                                    #
+#########################################################################
+#                   GNU General Public License v3.0                     #
+#########################################################################
+---
+################################
+# Basics
+################################
+
+dispatcharr_name: dispatcharr
+
+################################
+# Paths
+################################
+
+dispatcharr_paths_folder: "{{ dispatcharr_name }}"
+dispatcharr_paths_location: "{{ server_appdata_path }}/{{ dispatcharr_paths_folder }}"
+dispatcharr_paths_folders_list:
+  - "{{ dispatcharr_paths_location }}"
+
+################################
+# Web
+################################
+
+dispatcharr_web_subdomain: "{{ dispatcharr_name }}"
+dispatcharr_web_domain: "{{ user.domain }}"
+dispatcharr_web_port: "9191"
+dispatcharr_web_url: "{{ 'https://' + (dispatcharr_web_subdomain + '.' + dispatcharr_web_domain
+                    if (dispatcharr_web_subdomain | length > 0)
+                    else dispatcharr_web_domain) }}"
+
+################################
+# DNS
+################################
+
+dispatcharr_dns_record: "{{ dispatcharr_web_subdomain }}"
+dispatcharr_dns_zone: "{{ dispatcharr_web_domain }}"
+dispatcharr_dns_proxy: "{{ dns.proxied }}"
+
+################################
+# Traefik
+################################
+
+dispatcharr_traefik_sso_middleware: "{{ traefik_default_sso_middleware }}"
+dispatcharr_traefik_middleware_default: "{{ traefik_default_middleware }}"
+dispatcharr_traefik_middleware_custom: ""
+dispatcharr_traefik_certresolver: "{{ traefik_default_certresolver }}"
+dispatcharr_traefik_enabled: true
+dispatcharr_traefik_api_enabled: false
+dispatcharr_traefik_api_endpoint: ""
+
+################################
+# Docker
+################################
+
+# Container
+dispatcharr_docker_container: "{{ dispatcharr_name }}"
+
+# Image
+dispatcharr_docker_image_pull: true
+dispatcharr_docker_image_tag: "latest"
+dispatcharr_docker_image: "ghcr.io/dispatcharr/dispatcharr:{{ dispatcharr_docker_image_tag }}"
+
+# Ports
+dispatcharr_docker_ports_defaults: []
+dispatcharr_docker_ports_custom: []
+dispatcharr_docker_ports: "{{ dispatcharr_docker_ports_defaults
+                            + dispatcharr_docker_ports_custom }}"
+
+# Envs
+dispatcharr_docker_envs_default:
+  TZ: "{{ tz }}"
+  PUID: "{{ uid }}"
+  PGID: "{{ gid }}"
+  DISPATCHARR_ENV: "aio"
+  REDIS_HOST: "{{ dispatcharr_name }}-redis"
+  CELERY_BROKER_URL: "redis://{{ dispatcharr_name }}-redis:6379/0"
+  DISPATCHARR_LOG_LEVEL: "info"
+  dispatcharr_docker_envs_custom: {}
+dispatcharr_docker_envs: "{{ dispatcharr_docker_envs_default
+                           | combine(dispatcharr_docker_envs_custom) }}"
+
+# Commands
+dispatcharr_docker_commands_default: []
+dispatcharr_docker_commands_custom: []
+dispatcharr_docker_commands: "{{ dispatcharr_docker_commands_default
+                               + dispatcharr_docker_commands_custom }}"
+
+# Volumes
+dispatcharr_docker_volumes_default:
+  - "{{ dispatcharr_paths_location }}:/config"
+dispatcharr_docker_volumes_custom: []
+dispatcharr_docker_volumes: "{{ dispatcharr_docker_volumes_default
+                              + dispatcharr_docker_volumes_custom }}"
+
+# Devices
+dispatcharr_docker_devices_default: []
+dispatcharr_docker_devices_custom: []
+dispatcharr_docker_devices: "{{ dispatcharr_docker_devices_default
+                              + dispatcharr_docker_devices_custom }}"
+
+# Hosts
+dispatcharr_docker_hosts_default: {}
+dispatcharr_docker_hosts_custom: {}
+dispatcharr_docker_hosts: "{{ docker_hosts_common
+                            | combine(dispatcharr_docker_hosts_default)
+                            | combine(dispatcharr_docker_hosts_custom) }}"
+
+# Labels
+dispatcharr_docker_labels_default: {}
+dispatcharr_docker_labels_custom: {}
+dispatcharr_docker_labels: "{{ docker_labels_common
+                             | combine(dispatcharr_docker_labels_default)
+                             | combine(dispatcharr_docker_labels_custom) }}"
+
+# Hostname
+dispatcharr_docker_hostname: "{{ dispatcharr_name }}"
+
+# Networks
+dispatcharr_docker_networks_alias: "{{ dispatcharr_name }}"
+dispatcharr_docker_networks_default: []
+dispatcharr_docker_networks_custom: []
+dispatcharr_docker_networks: "{{ docker_networks_common
+                               + dispatcharr_docker_networks_default
+                               + dispatcharr_docker_networks_custom }}"
+
+# Capabilities
+dispatcharr_docker_capabilities_default: []
+dispatcharr_docker_capabilities_custom: []
+dispatcharr_docker_capabilities: "{{ dispatcharr_docker_capabilities_default
+                                   + dispatcharr_docker_capabilities_custom }}"
+
+# Security Opts
+dispatcharr_docker_security_opts_default: []
+dispatcharr_docker_security_opts_custom: []
+dispatcharr_docker_security_opts: "{{ dispatcharr_docker_security_opts_default
+                                    + dispatcharr_docker_security_opts_custom }}"
+
+# Restart Policy
+dispatcharr_docker_restart_policy: unless-stopped
+
+# State
+dispatcharr_docker_state: started
+
+# Dependencies
+dispatcharr_depends_on: "{{ dispatcharr_name }}-redis"
+dispatcharr_depends_on_delay: "0"
+dispatcharr_depends_on_healthchecks: "false"
