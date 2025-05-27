@@ -45,6 +45,7 @@
     - { role: crafty, tags: ['crafty'] }
     - { role: dashdot, tags: ['dashdot'] }
     - { role: dashy, tags: ['dashy'] }
+    - { role: decypharr, tags: ['decypharr'] }
     - { role: deemix, tags: ['deemix'] }
     - { role: delugevpn, tags: ['delugevpn'] }
     - { role: discoflix, tags: ['discoflix'] }
