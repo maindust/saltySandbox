@@ -1,0 +1,144 @@
+#########################################################################
+# Title:            Sandbox: decypharr                                  #
+# Author(s):        maindust                                            #
+# URL:              https://github.com/saltyorg/Sandbox                 #
+# --                                                                    #
+#########################################################################
+#                   GNU General Public License v3.0                     #
+#########################################################################
+---
+################################
+# Basics
+################################
+
+decypharr_name: decypharr
+
+################################
+# Paths
+################################
+
+decypharr_paths_folder: "{{ decypharr_name }}"
+decypharr_paths_location: "{{ server_appdata_path }}/{{ decypharr_paths_folder }}"
+decypharr_paths_folders_list:
+  - "{{ decypharr_paths_location }}"
+
+################################
+# Web
+################################
+
+decypharr_web_subdomain: "{{ decypharr_name }}"
+decypharr_web_domain: "{{ user.domain }}"
+decypharr_web_port: "8282"
+decypharr_web_url: "{{ 'https://' + (decypharr_web_subdomain + '.' + decypharr_web_domain
+                    if (decypharr_web_subdomain | length > 0)
+                    else decypharr_web_domain) }}"
+
+################################
+# DNS
+################################
+
+decypharr_dns_record: "{{ decypharr_web_subdomain }}"
+decypharr_dns_zone: "{{ decypharr_web_domain }}"
+decypharr_dns_proxy: "{{ dns.proxied }}"
+
+################################
+# Traefik
+################################
+
+decypharr_traefik_sso_middleware: "{{ traefik_default_sso_middleware }}"
+decypharr_traefik_middleware_default: "{{ traefik_default_middleware }}"
+decypharr_traefik_middleware_custom: ""
+decypharr_traefik_certresolver: "{{ traefik_default_certresolver }}"
+decypharr_traefik_enabled: true
+decypharr_traefik_api_enabled: false
+decypharr_traefik_api_endpoint: ""
+
+################################
+# Docker
+################################
+
+# Container
+decypharr_docker_container: "{{ decypharr_name }}"
+
+# Image
+decypharr_docker_image_pull: true
+decypharr_docker_image_tag: "latest"
+decypharr_docker_image: "ghcr.io/sirrobot01/decypharr:{{ decypharr_docker_image_tag }}"
+
+# Ports
+decypharr_docker_ports_defaults: []
+decypharr_docker_ports_custom: []
+decypharr_docker_ports: "{{ decypharr_docker_ports_defaults
+                            + decypharr_docker_ports_custom }}"
+
+# Envs
+decypharr_docker_envs_default:
+  TZ: "{{ tz }}"
+  PUID: "{{ uid }}"
+  PGID: "{{ gid }}"
+  decypharr_docker_envs_custom: {}
+decypharr_docker_envs: "{{ decypharr_docker_envs_default
+                           | combine(decypharr_docker_envs_custom) }}"
+
+# Commands
+decypharr_docker_commands_default: []
+decypharr_docker_commands_custom: []
+decypharr_docker_commands: "{{ decypharr_docker_commands_default
+                               + decypharr_docker_commands_custom }}"
+
+# Volumes
+decypharr_docker_volumes_default:
+  - "{{ decypharr_paths_location }}/config/:/app"
+  - "/mnt:/mnt"
+decypharr_docker_volumes_custom: []
+decypharr_docker_volumes: "{{ decypharr_docker_volumes_default
+                              + decypharr_docker_volumes_custom }}"
+
+# Devices
+decypharr_docker_devices_default: []
+decypharr_docker_devices_custom: []
+decypharr_docker_devices: "{{ decypharr_docker_devices_default
+                              + decypharr_docker_devices_custom }}"
+
+# Hosts
+decypharr_docker_hosts_default: {}
+decypharr_docker_hosts_custom: {}
+decypharr_docker_hosts: "{{ docker_hosts_common
+                            | combine(decypharr_docker_hosts_default)
+                            | combine(decypharr_docker_hosts_custom) }}"
+
+# Labels
+decypharr_docker_labels_default: {}
+decypharr_docker_labels_custom: {}
+decypharr_docker_labels: "{{ docker_labels_common
+                             | combine(decypharr_docker_labels_default)
+                             | combine(decypharr_docker_labels_custom) }}"
+
+# Hostname
+decypharr_docker_hostname: "{{ decypharr_name }}"
+
+# Networks
+decypharr_docker_networks_alias: "{{ decypharr_name }}"
+decypharr_docker_networks_default: []
+decypharr_docker_networks_custom: []
+decypharr_docker_networks: "{{ docker_networks_common
+                               + decypharr_docker_networks_default
+                               + decypharr_docker_networks_custom }}"
+
+# Capabilities
+decypharr_docker_capabilities_default: []
+decypharr_docker_capabilities_custom: []
+decypharr_docker_capabilities: "{{ decypharr_docker_capabilities_default
+                                   + decypharr_docker_capabilities_custom }}"
+
+# Security Opts
+decypharr_docker_security_opts_default: []
+decypharr_docker_security_opts_custom: []
+decypharr_docker_security_opts: "{{ decypharr_docker_security_opts_default
+                                    + decypharr_docker_security_opts_custom }}"
+
+# Restart Policy
+decypharr_docker_restart_policy: unless-stopped
+
+# State
+decypharr_docker_state: started
